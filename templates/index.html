@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>SeekInfo</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  background: linear-gradient(135deg, #f8fafc, #eef2ff);
+  color: #1f2937;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 300px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px);
+  border-right: 1px solid rgba(0,0,0,0.08);
+  padding: 20px;
+  transition: transform 0.3s ease;
+  z-index: 100;
+}
+
+.app-name {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  background: linear-gradient(90deg, #2563eb, #4f46e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.upload-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.note {
+  font-size: 12px;
+  color: #ef4444;
+  margin-top: 6px;
+}
+
+.upload-box {
+  height: 110px;
+  border-radius: 20px;
+  border: 2px dashed rgba(79, 70, 229, 0.35);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.upload-box input {
+  display: none;
+}
+
+/* ===== Chat ===== */
+.chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 16px;
+}
+
+.header {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.chat-box {
+  flex: 1;
+  background: white;
+  border-radius: 16px;
+  padding: 14px;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+.msg {
+  max-width: 80%;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  font-size: 16px;
+}
+
+.user {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  color: white;
+  margin-left: auto;
+}
+
+.bot {
+  background: #f1f5f9;
+}
+
+.sources {
+  font-size: 16px;
+  color: #4f46e5;
+  margin-top: 6px;
+}
+
+/* Input */
+.input-area {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.input-area input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  font-size: 16px;
+}
+
+.input-area button {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  color: white;
+  font-weight: 600;
+}
+
+/* ===== Mobile ===== */
+.menu-btn {
+  display: none;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #e0e7ff;
+  border: none;
+}
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  display: none;
+  z-index: 90;
+}
+
+/* ===== Progress Bar ===== */
+.progress {
+  width: 100%;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 12px;
+  display: none;   /* controlled by JS */
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+  transition: width 0.3s ease;
+}
+
+
+@media (max-width: 768px) {
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .menu-btn {
+    display: block;
+  }
+
+  .chat-container {
+    padding: 10px;
+  }
+
+  .chat-box {
+    margin-bottom: 55px;
+  }
+
+  .input-area {
+    position: sticky;
+    bottom: 12px;
+    background: rgba(255,255,255,0.95);
+    padding: 8px;
+    border-radius: 14px;
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.08);
+  }
+}
+/* ===== Citation Chips ===== */
+.citation-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.citation-chip {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+  cursor: pointer;
+}
+
+.citation-chip:hover {
+  background: #e0e7ff;
+}
+
+</style>
+</head>
+
+<body>
+<div id="overlay"></div>
+
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="app-name">SeekInfo</div>
+
+  <label class="upload-box">
+  <div class="upload-content">
+
+    <input type="file" id="fileInput" multiple accept=".pdf,.txt">
+    <div class="upload-title">Upload Sources</div>
+    <div class="note">Only PDF and TXT allowed</div>
+
+    </div>
+  </label>
+    <button id="addTextBtn" style="
+    margin-top:12px;
+    width:100%;
+    padding:10px;
+    border-radius:12px;
+    border:1px solid #c7d2fe;
+    background:#eef2ff;
+    color:#4338ca;
+    font-weight:600;
+    cursor:pointer;
+    ">
+    + Add Custom Text
+    </button>
+
+
+  <div class="progress" id="progress">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="file-list" id="fileList"></div>
+  <div class="available_file" id="availableFileList" style="margin-top: 25px;margin-bottom: 0px;"></div>
+</div>
+
+<!-- Chat -->
+<div class="chat-container">
+  <button class="menu-btn" onclick="toggleSidebar()">☰ Sources</button>
+  <div class="header">Ask questions from your documents</div>
+
+  <div class="chat-box" id="chatBox">
+    <div class="msg bot" id="placeholder">👋 Upload documents and start asking.</div>
+  </div>
+
+  <div class="input-area">
+    <input id="questionInput" placeholder="Ask something from your sources..." />
+    <button onclick="sendQuestion()">Send</button>
+  </div>
+  <div id="popup" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.3);
+  z-index:999;
+">
+  <div id="popupContent" style="
+    background:white;
+    max-width:90%;
+    max-height:70%;
+    margin:10% auto;
+    padding:16px;
+    border-radius:12px;
+    overflow:auto;
+  ">
+  </div>
+</div>
+
+</div>
+<div id="textModal" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.35);
+  z-index:999;
+">
+  <div style="
+    background:white;
+    max-width:600px;
+    width:90%;
+    margin:8% auto;
+    padding:16px;
+    border-radius:16px;
+  ">
+    <h3 style="margin-top:0;">Add Custom Text</h3>
+
+    <textarea id="customTextInput" placeholder="Paste your text here..."
+      style="
+        width:100%;
+        min-height:160px;
+        padding:12px;
+        border-radius:12px;
+        border:1px solid #e5e7eb;
+        resize:vertical;
+        font-size:16px;
+      ">
+    </textarea>
+
+    <div style="margin-top:12px; text-align:right;">
+      <button onclick="closeTextModal()" style="margin-right:8px;">Cancel</button>
+      <button onclick="submitCustomText()" style="
+        padding:8px 14px;
+        border-radius:10px;
+        border:none;
+        background:#4f46e5;
+        color:white;
+        font-weight:600;
+      ">
+        Add
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+const fileInput = document.getElementById("fileInput");
+const progress = document.getElementById("progress");
+const progressBar = document.getElementById("progressBar");
+const fileList = document.getElementById("fileList");
+const chatBox = document.getElementById("chatBox");
+const availableFileList = document.getElementById("availableFileList");
+const addTextBtn = document.getElementById("addTextBtn");
+const textModal = document.getElementById("textModal");
+const customTextInput = document.getElementById("customTextInput");
+const a = document.createElement("h4");
+a.textContent = "Uploaded Sources are :"
+a.style.marginTop='25px';
+a.style.marginBottom='3px';
+availableFileList.appendChild(a);
+
+addTextBtn.onclick = () => {
+  textModal.style.display = "block";
+  customTextInput.value = "";
+};
+
+function closeTextModal() {
+  textModal.style.display = "none";
+}
+
+async function submitCustomText() {
+  const text = customTextInput.value.trim();
+  if (!text) return;
+
+  try {
+    const res = await fetch("/add_text", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text })
+    });
+
+    const result = await res.json();
+
+    // Show in available files list (as virtual doc)
+
+    const li = document.createElement("li");
+    li.className = "file-items";
+    li.textContent = text.substring(0,15)+"....";
+    availableFileList.appendChild(li);
+
+    closeTextModal();
+  } catch (err) {
+    console.error("Failed to add text", err);
+  }
+}
+
+fileInput.addEventListener("change", async function () {
+  fileList.innerHTML = "";
+  console.log(availableFileList.innerHTML)
+  if (availableFileList.innerHTML==''){
+      availableFileList.innerHTML = "Uploaded Files: "
+  }
+  progress.style.display = "block";
+  progressBar.style.width = "50%";
+  let p = 0;
+
+  const files = fileInput.files;
+  if (!files.length) return;
+
+  const formData = new FormData();
+
+  // add all files
+  for (let file of files) {
+    formData.append("files", file);
+  }
+
+  try {
+    const response = await fetch("/upload", {
+      method: "POST",
+      body: formData
+    });
+    progress.style.display = "block";
+    progressBar.style.width = "50%";
+    const result = await response.json();
+    total_file = result['uploaded']
+    for (let f of total_file) { 
+        const div = document.createElement("li");
+        div.className = "file-items";
+        div.style.marginTop='3px';
+        div.textContent = f;
+        availableFileList.appendChild(div);
+    }
+
+    progressBar.style.width = "100%";
+    progress.style.display = "none";
+    for (let f of fileInput.files) {
+        const div = document.createElement("div");
+        div.className = "file-item";
+        if(result['uploaded'].includes(f.name)){
+            div.textContent = "Successfully Uploaded: "+f.name;
+        }
+        else if(result['rejected'].includes(f.name)){
+            div.textContent = "Not uploaded: "+f.name;
+        }
+        else if(result['already_uploaded'].includes(f.name)){
+            div.textContent = "Already Present: "+f.name;
+        }
+        fileList.appendChild(div);
+    }
+    console.log(result);
+
+  } catch (err) {
+    console.error("Upload failed", err);
+  }
+
+
+});
+
+function showPopup(text) {
+  const popup = document.getElementById("popup");
+  const content = document.getElementById("popupContent");
+
+  content.innerText = text;
+  popup.style.display = "block";
+
+  popup.onclick = () => popup.style.display = "none";
+}
+
+
+function sendQuestion() {
+  const q = questionInput.value.trim();
+  document.getElementById('placeholder').hidden = true;
+  if (!q) return;
+
+  // ✅ SAFE user message
+  const userMsg = document.createElement("div");
+  userMsg.className = "msg user";
+  userMsg.innerText = q;
+  chatBox.appendChild(userMsg);
+
+  questionInput.value = "";
+
+  fetch("generate?prompt=" + encodeURIComponent(q))
+    .then(res => res.json())
+    .then(data => {
+
+      const botMsg = document.createElement("div");
+      botMsg.className = "msg bot";
+
+      const sourcesDiv = document.createElement("div");
+      sourcesDiv.className = "sources";
+      sourcesDiv.innerText = data.answer;
+
+      botMsg.appendChild(sourcesDiv);
+      chatBox.appendChild(botMsg);
+
+      // ===== ADD CITATIONS =====
+      if (data.citation && Array.isArray(data.citation)) {
+
+        const chipsContainer = document.createElement("div");
+        chipsContainer.className = "citation-chips";
+
+        data.citation.forEach(c => {
+          const chip = document.createElement("div");
+          chip.className = "citation-chip";
+          chip.innerText = c.page
+            ? `${c.source} · p${c.page}`
+            : `${c.source}`;
+
+          chip.onclick = () => {
+            if (!c.page) {
+              showPopup(
+                `This part of Source used:-\nSOURCE: ${c.source}\nDATA:\n${c.chunk}`
+              );
+            } else {
+              showPopup(
+                `This part of Source used:-\nSOURCE: ${c.source}\nPAGE: ${c.page}\nDATA:\n${c.chunk}`
+              );
+            }
+          };
+
+          chipsContainer.appendChild(chip);
+        });
+
+        sourcesDiv.appendChild(chipsContainer);
+      }
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    })
+    .catch(() => {
+      chatBox.innerText = "Error processing Message";
+    });
+
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+
+  sidebar.classList.toggle("open");
+
+  if (sidebar.classList.contains("open")) {
+    overlay.style.display = "block";
+  } else {
+    overlay.style.display = "none";
+  }
+}
+
+document.getElementById("overlay").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("overlay").style.display = "none";
+});
+
+</script>
+</body>
+</html>
