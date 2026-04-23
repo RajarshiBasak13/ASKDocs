@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# HF / temp
+*.tmp
+.cache/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Env files
+.env
+**/.env
+*.ipynb_checkpoints
+
+# Database
+user.db
+**/user.db
+
+# Vector DB
+vector_db/
+**/vector_db/
+
+checkpoint*
+**/checkpoint*

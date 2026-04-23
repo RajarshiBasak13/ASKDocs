@@ -6,11 +6,13 @@
 <title>SeekInfo</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <style>
+/* ===== RESET ===== */
 * {
   box-sizing: border-box;
-  font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Manrope', system-ui, -apple-system, sans-serif;
 }
 
 html, body {
@@ -21,46 +23,59 @@ html, body {
 
 body {
   display: flex;
-  background: linear-gradient(135deg, #f8fafc, #eef2ff);
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
   color: #1f2937;
 }
 
-/* ===== Sidebar ===== */
+/* ===== SIDEBAR ===== */
 .sidebar {
-  width: 300px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(16px);
-  border-right: 1px solid rgba(0,0,0,0.08);
-  padding: 20px;
-  transition: transform 0.3s ease;
-  z-index: 100;
+  width: 280px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(18px);
+  border-right: 1px solid rgba(0,0,0,0.06);
+  padding: 18px;
+  transition: all 0.3s ease;
 }
 
 .app-name {
-  font-size: 30px;
+  font-size: 26px;
   font-weight: 700;
-  margin-bottom: 20px;
-  background: linear-gradient(90deg, #2563eb, #4f46e5);
+  margin-bottom: 16px;
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.upload-title {
-  font-size: 15px;
-  font-weight: 600;
+/* Chat items */
+.chat-item {
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  background: white;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
 }
 
-.note {
-  font-size: 12px;
-  color: #ef4444;
-  margin-top: 6px;
+/* hover */
+.chat-item:hover {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  transform: translateX(2px);
+}
+
+/* active / selected */
+.chat-item.active {
+  background: linear-gradient(135deg, #e0e7ff, #eef2ff);
+  border-color: #6366f1;
 }
 
 .upload-box {
-  height: 110px;
-  border-radius: 20px;
-  border: 2px dashed rgba(79, 70, 229, 0.35);
-  background: white;
+  height: 35px;
+  border-radius:12px;
+  border:1px solid #c7d2fe;
+  background:#eef2ff;
+  color:#4338ca;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,76 +86,143 @@ body {
   display: none;
 }
 
-/* ===== Chat ===== */
+/* ===== CHAT AREA ===== */
+#all_chats {
+  margin-top: 6px;
+  padding: 6px;
+  background: rgba(243, 244, 246, 0.8); /* light gray */
+  border-radius: 12px;
+}
+
 .chat-container {
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  padding: 16px;
+  padding: 18px;
 }
 
+/* Header */
 .header {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
+  color: #374151;
   margin-bottom: 8px;
 }
 
+/* Chat box */
 .chat-box {
   flex: 1;
-  background: white;
-  border-radius: 16px;
-  padding: 14px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 18px;
+  padding: 18px;
   overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+  scroll-behavior: smooth;
 }
 
+/* ===== MESSAGES ===== */
 .msg {
-  max-width: 80%;
-  padding: 12px 14px;
-  margin-bottom: 10px;
-  border-radius: 14px;
-  font-size: 16px;
+  max-width: 75%;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .user {
+  margin-left: auto;
   background: linear-gradient(135deg, #3b82f6, #6366f1);
   color: white;
-  margin-left: auto;
+  border-bottom-right-radius: 6px;
 }
 
 .bot {
   background: #f1f5f9;
+  border-bottom-left-radius: 6px;
 }
 
+/* Sources text */
 .sources {
-  font-size: 16px;
-  color: #4f46e5;
+  font-size: 15px;
   margin-top: 6px;
+  color: #374151;
 }
 
-/* Input */
+/* ===== INPUT AREA (UPGRADED) ===== */
 .input-area {
   display: flex;
+  align-items: center;
   gap: 8px;
-  margin-top: 10px;
+  margin-top: 12px;
+  padding: 8px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
 }
 
+/* Input field */
 .input-area input {
   flex: 1;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  font-size: 16px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  padding: 10px;
+  background: transparent;
 }
 
+/* Mode selector */
+#modeSelector {
+  border: none;
+  background: #eef2ff;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#modeSelector:hover {
+  background: #e0e7ff;
+}
+
+/* Send button */
 .input-area button {
-  padding: 12px 16px;
+  padding: 10px 14px;
   border-radius: 12px;
   border: none;
   background: linear-gradient(135deg, #3b82f6, #6366f1);
   color: white;
   font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.input-area button:hover {
+  transform: scale(1.05);
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress {
+  width: 100%;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+  transition: width 0.3s ease;
 }
 
 /* ===== Mobile ===== */
@@ -203,7 +285,7 @@ body {
   }
 
   .chat-box {
-    margin-bottom: 55px;
+    margin-bottom: 10px;
   }
 
   .input-area {
@@ -215,6 +297,13 @@ body {
     box-shadow: 0 -6px 20px rgba(0,0,0,0.08);
   }
 }
+#modeSelector {
+  margin-left: 8px;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 /* ===== Citation Chips ===== */
 .citation-chips {
   display: flex;
@@ -242,22 +331,11 @@ body {
 
 <body>
 <div id="overlay"></div>
-
-
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
   <div class="app-name">SeekInfo</div>
-
-  <label class="upload-box">
-  <div class="upload-content">
-
-    <input type="file" id="fileInput" multiple accept=".pdf,.txt">
-    <div class="upload-title">Upload Sources</div>
-    <div class="note">Only PDF and TXT allowed</div>
-
-    </div>
-  </label>
-    <button id="addTextBtn" style="
+  <div style="margin-top:25px;margin-bottom: 13px;">
+    <button id="NewChat" style="
     margin-top:12px;
     width:100%;
     padding:10px;
@@ -267,60 +345,23 @@ body {
     color:#4338ca;
     font-weight:600;
     cursor:pointer;
-    ">
-    + Add Custom Text
-    </button>
-
-
-  <div class="progress" id="progress">
-    <div class="progress-bar" id="progressBar"></div>
+    "> + New Chat </button>
   </div>
+  <label class="upload-box">
+    <div class="upload-content">
+      <input type="file" id="fileInput" multiple accept=".pdf,.txt">
+      <div class="upload-title">+ Add file</div>
+    </div>
+  </label>
 
-  <div class="file-list" id="fileList"></div>
-  <div class="available_file" id="availableFileList" style="margin-top: 25px;margin-bottom: 0px;"></div>
-</div>
-
-<!-- Chat -->
-<div class="chat-container">
-  <button class="menu-btn" onclick="toggleSidebar()">☰ Sources</button>
-  <div class="header">Ask questions from your documents</div>
-
-  <div class="chat-box" id="chatBox">
-    <div class="msg bot" id="placeholder">👋 Upload documents and start asking.</div>
-  </div>
-
-  <div class="input-area">
-    <input id="questionInput" placeholder="Ask something from your sources..." />
-    <button onclick="sendQuestion()">Send</button>
-  </div>
-  <div id="popup" style="
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.3);
-  z-index:999;
-">
-  <div id="popupContent" style="
-    background:white;
-    max-width:90%;
-    max-height:70%;
-    margin:10% auto;
-    padding:16px;
-    border-radius:12px;
-    overflow:auto;
-  ">
-  </div>
-</div>
-
-</div>
-<div id="textModal" style="
+    <div id="textModal" style="
   display:none;
   position:fixed;
   inset:0;
   background:rgba(0,0,0,0.35);
   z-index:999;
-">
-  <div style="
+  ">
+    <div style="
     background:white;
     max-width:600px;
     width:90%;
@@ -328,50 +369,334 @@ body {
     padding:16px;
     border-radius:16px;
   ">
-    <h3 style="margin-top:0;">Add Custom Text</h3>
-
-    <textarea id="customTextInput" placeholder="Paste your text here..."
-      style="
+      <h3 style="margin-top:0;">Add Custom Text</h3>
+      <textarea id="customTextInput" placeholder="Paste your text here..." style="
         width:100%;
-        min-height:160px;
+        min-height:480px;
         padding:12px;
         border-radius:12px;
         border:1px solid #e5e7eb;
         resize:vertical;
         font-size:16px;
-      ">
-    </textarea>
-
-    <div style="margin-top:12px; text-align:right;">
-      <button onclick="closeTextModal()" style="margin-right:8px;">Cancel</button>
-      <button onclick="submitCustomText()" style="
+      "></textarea>
+      <div style="margin-top:12px; text-align:right;">
+        <button onclick="closeTextModal()" style="margin-right:8px;">Cancel</button>
+        <button onclick="submitCustomText()" style="
         padding:8px 14px;
         border-radius:10px;
         border:none;
         background:#4f46e5;
         color:white;
-        font-weight:600;
-      ">
-        Add
-      </button>
+        font-weight:700;
+      "> Add </button>
+      </div>
     </div>
+  </div>
+
+  <button id="addTextBtn" style="
+    margin-top:12px;
+    width:100%;
+    padding:10px;
+    border-radius:12px;
+    border:1px solid #c7d2fe;
+    background:#eef2ff;
+    color:#4338ca;
+    font-weight:600;
+    cursor:pointer;
+    "> + Add Custom Text </button>
+  <div class="file-list" id="fileList"></div>
+  <div class="available_file" id="availableFileList" style="margin-top: 25px;margin-bottom: 0px;"></div>
+  <h4 style="margin-bottom: 0px;">Recent Chats:</h4>
+  <div id="all_chats" style="margin-top: 2px;margin-bottom: 0px;"></div>
+
+</div>
+<!-- Chat -->
+<div class="chat-container">
+
+  <button class="menu-btn" onclick="toggleSidebar()">☰ Sources</button>
+
+  <!-- ✅ UPDATED HEADER WITH LOGIN/SIGNUP -->
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div class="header">Ask anything — powered by your data, web, and AI</div>
+    <div id="user_prof" style="display:none; gap:8px;"></div>
+    <div class='auth' style="display:flex; gap:8px;">
+      <button onclick="openLogin()" style="
+        padding:8px 14px;
+        border-radius:10px;
+        border:1px solid #c7d2fe;
+        background:#eef2ff;
+        color:#4338ca;
+        font-weight:600;
+        cursor:pointer;
+      "> Login </button>
+      <button onclick="openSignup()" style="
+        padding:8px 14px;
+        border-radius:10px;
+        border:none;
+        background:linear-gradient(135deg,#3b82f6,#6366f1);
+        color:white;
+        font-weight:600;
+        cursor:pointer;
+      "> Signup </button>
+    </div>
+  </div>
+
+  <div class="chat-box" id="chatBox">
+    <div class="welcome" id="placeholder" style="text-align:center; margin-top:40px; color:#6b7280;">
+  👋 Start by uploading files or ask anything
+  <br><br>
+  <span style="font-size:14px;">I search your data, the web, and AI knowledge</span>
+</div>
+  </div>
+
+    <div class="input-area">
+      <input id="questionInput" placeholder="Ask anything — search your data, web, and AI..." />
+
+      <select id="modeSelector">
+        <option value="normal" selected>Normal Answer</option>
+        <option value="summary">Quick Summary</option>
+        <option value="report">Detailed Report</option>
+      </select>
+
+      <button onclick="sendQuestion()">➤</button>
+    </div>
+      <!-- ✅ LOGIN MODAL -->
+    <div id="loginModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:999;">
+      <div style="background:white; max-width:400px; margin:10% auto; padding:20px; border-radius:16px;">
+        <h3>Login</h3>
+        <input id="loginEmail" placeholder="Email" style="width:100%;margin-bottom:10px;padding:10px;">
+        <input id="loginPassword" type="password" placeholder="Password" style="width:100%;margin-bottom:10px;padding:10px;">
+        <button onclick="login()">Login</button>
+        <button onclick="closeLogin()">Cancel</button>
+      </div>
+    </div>
+    <!-- ✅ SIGNUP MODAL -->
+    <div id="signupModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:999;">
+      <div style="background:white; max-width:400px; margin:10% auto; padding:20px; border-radius:16px;">
+        <h3>Signup</h3>
+        <input id="signupEmail" placeholder="Email" style="width:100%;margin-bottom:10px;padding:10px;">
+        <input id="signupPassword" type="password" placeholder="Password" style="width:100%;margin-bottom:10px;padding:10px;">
+        <button onclick="signup()">Signup</button>
+        <button onclick="closeSignup()">Cancel</button>
+        <hr style="margin:12px 0; border:none; border-top:1px solid #e5e7eb;">
+        <div style="text-align:center; font-size:13px; margin-bottom:8px;"> or sign up with </div>
+        <div id="g_id_onload" data-client_id="309418144445-gcp520qqchaia98ldom3br9vqsn2lpp4.apps.googleusercontent.com" data-callback="handleGoogleSignup"></div>
+        <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="signup_with" data-shape="pill" data-logo_alignment="center"></div>
+      </div>
+    </div>
+
+  <div id="popup" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.3);
+  z-index:999;
+  ">
+    <div id="popupContent" style="
+    background:white;
+    max-width:90%;
+    max-height:70%;
+    margin:10% auto;
+    padding:16px;
+    border-radius:12px;
+    overflow:auto;
+    "></div>
   </div>
 </div>
 <script>
 const fileInput = document.getElementById("fileInput");
 const progress = document.getElementById("progress");
-const progressBar = document.getElementById("progressBar");
 const fileList = document.getElementById("fileList");
 const chatBox = document.getElementById("chatBox");
 const availableFileList = document.getElementById("availableFileList");
 const addTextBtn = document.getElementById("addTextBtn");
+const NewChat = document.getElementById("NewChat");
 const textModal = document.getElementById("textModal");
 const customTextInput = document.getElementById("customTextInput");
+const recentChats = document.getElementById("all_chats");
+let thread_obj = {'thread':''}
+
 const a = document.createElement("h4");
-a.textContent = "Uploaded Sources are :"
+a.innerHTML = `
+        <p>
+          Sources :
+          <span title="To  understand  1MB   file  I  need  ~2  minutes."
+                style="cursor: help; margin-left:4px;">
+            ℹ️
+          </span>
+        </p>
+      `;
 a.style.marginTop='25px';
 a.style.marginBottom='3px';
 availableFileList.appendChild(a);
+
+window.onload = function () {
+  check_authentication();
+  get_all_chat();
+};
+
+
+function addChat(thread, name) {
+  const div = document.createElement("div");
+
+  div.className = "chat-item";
+  div.innerText = `💬 ${name}`;
+
+  // store thread
+  div.dataset.thread = thread;
+
+  // click event
+  div.onclick = () => {
+    console.log("Clicked thread:", div.dataset.thread);
+    // remove active from all
+    document.querySelectorAll(".chat-item").forEach(el => el.classList.remove("active"));
+
+    // add to current
+    div.classList.add("active");
+    document.getElementById('placeholder').hidden = true;
+    document.querySelectorAll(".msg.user").forEach(el => el.remove());
+    document.querySelectorAll(".msg.bot").forEach(el => el.remove());
+    thread_obj.thread = div.dataset.thread
+
+    // here you can load chat
+    loadChat(thread_obj.thread);
+  };
+
+  recentChats.appendChild(div);
+}
+
+
+function loadChat(thread_str){
+        fetch("/get_chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify({ thread: thread_str })
+          })
+          .then(res => res.json())
+          .then(data => {
+              console.log("loadChat1",data.all_chats)
+              let iter_chat = 0;
+              for (let chat of data.all_chats) {
+
+                if (chat[0] == 'user') {
+                  const userMsg = document.createElement("div");
+                  userMsg.className = "msg user";
+                  userMsg.innerText = chat[1];
+                  chatBox.appendChild(userMsg);
+                }
+
+                else if (chat[0] == 'bot') {
+
+                  const botMsg = document.createElement("div");
+                  botMsg.className = "msg bot";
+
+                  const sourcesDiv = document.createElement("div");
+                  sourcesDiv.className = "sources";
+                  sourcesDiv.innerHTML = chat[1];
+
+                  botMsg.appendChild(sourcesDiv);
+                  chatBox.appendChild(botMsg);
+
+                  // ✅ ADD CITATIONS
+                  if (data.citation && Array.isArray(data.citation)) {
+
+                    const chipsContainer = document.createElement("div");
+                    chipsContainer.className = "citation-chips";
+
+                    const citations = data.citation[iter_chat] || [];
+
+                    citations.forEach(c => {
+                      const chip = document.createElement("div");
+                      chip.className = "citation-chip";
+
+                      chip.innerText = c.page
+                        ? `${c.source} · p${c.page}`
+                        : `${c.source}`;
+
+                      chip.onclick = () => {
+                        showPopup(
+                          c.page
+                            ? `SOURCE: ${c.source}\nPAGE: ${c.page}\nDATA:\n${c.chunk}`
+                            : `SOURCE: ${c.source}\nDATA:\n${c.chunk}`
+                        );
+                      };
+
+                      chipsContainer.appendChild(chip);
+                    });
+
+                    sourcesDiv.appendChild(chipsContainer);
+
+                    // ✅ increment ONLY after one bot message
+                    iter_chat++;
+                  }
+                }
+              }
+
+          })
+
+}
+
+function get_all_chat(){
+  fetch("/get_thread", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            credentials: "include"
+          })
+          .then(res => res.json())
+          .then(data => {
+            thread_li = data.thread_li
+            recentChats.innerHTML = ''
+            for (let thread of thread_li){
+                  console.log("get_thread",thread)
+                  addChat(thread[0], thread[1])
+            }
+          })
+}
+
+
+NewChat.onclick = () => {
+  fetch("/check_auth", {
+        method: "GET",
+        credentials: "include"  // IMPORTANT
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.username) {
+
+            placeholder.innerHTML = ''
+
+           fetch("/new_chat", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            credentials: "include"
+          })
+          .then(res => res.json())
+          .then(data => {
+            thread_obj.thread = data.thread
+            get_all_chat()
+                        // remove active from all
+            document.querySelectorAll(".chat-item").forEach(el => el.classList.remove("active"));
+
+            document.getElementById('placeholder').hidden = true;
+            document.querySelectorAll(".msg.user").forEach(el => el.remove());
+            document.querySelectorAll(".msg.bot").forEach(el => el.remove());
+
+            // here you can load chat
+            loadChat(thread_obj.thread);
+            console.log("NewChat", thread_obj.thread)
+          })
+    } else {
+      openSignup()
+    }
+  });
+};
 
 addTextBtn.onclick = () => {
   textModal.style.display = "block";
@@ -399,6 +724,7 @@ async function submitCustomText() {
 
     const li = document.createElement("li");
     li.className = "file-items";
+    li.style.marginTop='4px';
     li.textContent = text.substring(0,15)+"....";
     availableFileList.appendChild(li);
 
@@ -408,14 +734,15 @@ async function submitCustomText() {
   }
 }
 
+
+
 fileInput.addEventListener("change", async function () {
   fileList.innerHTML = "";
   console.log(availableFileList.innerHTML)
   if (availableFileList.innerHTML==''){
       availableFileList.innerHTML = "Uploaded Files: "
   }
-  progress.style.display = "block";
-  progressBar.style.width = "50%";
+
   let p = 0;
 
   const files = fileInput.files;
@@ -433,35 +760,50 @@ fileInput.addEventListener("change", async function () {
       method: "POST",
       body: formData
     });
-    progress.style.display = "block";
-    progressBar.style.width = "50%";
     const result = await response.json();
     total_file = result['uploaded']
-    for (let f of total_file) { 
-        const div = document.createElement("li");
-        div.className = "file-items";
-        div.style.marginTop='3px';
-        div.textContent = f;
-        availableFileList.appendChild(div);
-    }
 
-    progressBar.style.width = "100%";
-    progress.style.display = "none";
     for (let f of fileInput.files) {
+        let fname = f.name.split('/')[f.name.split('/').length-1]
+        console.log(fname)
         const div = document.createElement("div");
         div.className = "file-item";
-        if(result['uploaded'].includes(f.name)){
-            div.textContent = "Successfully Uploaded: "+f.name;
+        if(result['rejected'].includes(fname)){
+            div.innerHTML = "<p>Not uploaded: "+fname+"<br/> rules:-<br/>1.Filesize <= 1 MB<br/>2.Only .pdf and .txt file is allowed.</p>";
         }
-        else if(result['rejected'].includes(f.name)){
-            div.textContent = "Not uploaded: "+f.name;
-        }
-        else if(result['already_uploaded'].includes(f.name)){
-            div.textContent = "Already Present: "+f.name;
+        else if(result['already_uploaded'].includes(fname)){
+            div.textContent = "Already Present: "+fname;
         }
         fileList.appendChild(div);
     }
+
+    for (let f1 of total_file) {
+        let f = f1.split('_').slice(1).join('_')
+        const div = document.createElement("li");
+        const us = document.createElement('p')
+        div.className = "file-items";
+        us.id=f
+        us.style.marginBottom='0px'
+        us.style.marginTop='4px'
+        us.innerText='⏳processing... '+f
+        console.log(us,f)
+        div.style.marginTop='0px';
+        div.appendChild(us);
+        availableFileList.appendChild(div);
+    }
+
     console.log(result);
+    for (let f1 of total_file){
+      let iid = setInterval(() => {
+          fetch('/upload_status?file='+f1).then(response=>response.json()).then(data=>{
+          const is_available_status = data["upload_status"]
+          if(is_available_status=='done'){
+              document.getElementById(f1.split('_').slice(1).join('_')).innerText = f1.split('_').slice(1).join('_')
+              clearInterval(iid)
+          }
+        })
+      }, 1000);
+    }
 
   } catch (err) {
     console.error("Upload failed", err);
@@ -483,6 +825,7 @@ function showPopup(text) {
 
 function sendQuestion() {
   const q = questionInput.value.trim();
+  const mode = document.getElementById("modeSelector").value; // NEW
   document.getElementById('placeholder').hidden = true;
   if (!q) return;
 
@@ -494,56 +837,68 @@ function sendQuestion() {
 
   questionInput.value = "";
 
-  fetch("generate?prompt=" + encodeURIComponent(q))
-    .then(res => res.json())
-    .then(data => {
-
-      const botMsg = document.createElement("div");
-      botMsg.className = "msg bot";
-
-      const sourcesDiv = document.createElement("div");
-      sourcesDiv.className = "sources";
-      sourcesDiv.innerText = data.answer;
-
-      botMsg.appendChild(sourcesDiv);
-      chatBox.appendChild(botMsg);
-
-      // ===== ADD CITATIONS =====
-      if (data.citation && Array.isArray(data.citation)) {
-
-        const chipsContainer = document.createElement("div");
-        chipsContainer.className = "citation-chips";
-
-        data.citation.forEach(c => {
-          const chip = document.createElement("div");
-          chip.className = "citation-chip";
-          chip.innerText = c.page
-            ? `${c.source} · p${c.page}`
-            : `${c.source}`;
-
-          chip.onclick = () => {
-            if (!c.page) {
-              showPopup(
-                `This part of Source used:-\nSOURCE: ${c.source}\nDATA:\n${c.chunk}`
-              );
-            } else {
-              showPopup(
-                `This part of Source used:-\nSOURCE: ${c.source}\nPAGE: ${c.page}\nDATA:\n${c.chunk}`
-              );
-            }
-          };
-
-          chipsContainer.appendChild(chip);
-        });
-
-        sourcesDiv.appendChild(chipsContainer);
-      }
-
-      chatBox.scrollTop = chatBox.scrollHeight;
+  fetch("/generate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials: "include",
+    body: JSON.stringify({
+      prompt: q,
+      mode: mode,
+      thread: thread_obj.thread
     })
-    .catch(() => {
-      chatBox.innerText = "Error processing Message";
-    });
+  })
+  .then(res => res.json())
+  .then(data => {
+
+    const botMsg = document.createElement("div");
+    botMsg.className = "msg bot";
+
+    const sourcesDiv = document.createElement("div");
+    sourcesDiv.className = "sources";
+    sourcesDiv.innerHTML = data.answer;
+
+    botMsg.appendChild(sourcesDiv);
+    chatBox.appendChild(botMsg);
+
+    // ===== ADD CITATIONS =====
+    if (data.citation && Array.isArray(data.citation)) {
+
+      const chipsContainer = document.createElement("div");
+      chipsContainer.className = "citation-chips";
+
+      data.citation.forEach(c => {
+        const chip = document.createElement("div");
+        chip.className = "citation-chip";
+        chip.innerText = c.page
+          ? `${c.source} · p${c.page}`
+          : `${c.source}`;
+
+        chip.onclick = () => {
+          if (!c.page) {
+            showPopup(
+              `This part of Source used:-\nSOURCE: ${c.source}\nDATA:\n${c.chunk}`
+            );
+          } else {
+            showPopup(
+              `This part of Source used:-\nSOURCE: ${c.source}\nPAGE: ${c.page}\nDATA:\n${c.chunk}`
+            );
+          }
+        };
+
+        chipsContainer.appendChild(chip);
+      });
+
+      sourcesDiv.appendChild(chipsContainer);
+    }
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+    get_all_chat();
+  })
+  .catch(() => {
+    chatBox.innerText = "Error processing Message";
+  });
 
 }
 
@@ -557,6 +912,215 @@ function toggleSidebar() {
     overlay.style.display = "block";
   } else {
     overlay.style.display = "none";
+  }
+}
+
+// ===== OPEN CLOSE =====
+function handleGoogleSignup(response) {
+  const credential = response.credential;
+
+  fetch("/google_signup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials: "include",
+    body: JSON.stringify({ token: credential })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      document.getElementsByClassName('auth')[0].style.display = "none";
+      document.getElementById('user_prof').style.display= 'block';
+      document.getElementById('user_prof').innerHTML = `
+      <div style="
+        display:flex;
+        align-items:center;
+        gap:10px;
+        background:#eef2ff;
+        padding:6px 10px;
+        border-radius:999px;
+        border:1px solid #c7d2fe;
+      ">
+        <span style="font-weight:600; color:#4338ca;">
+          👤 ${data.user}
+        </span>
+
+        <button onclick="logout()" style="
+          border:none;
+          background:transparent;
+          cursor:pointer;
+          font-size:14px;
+        ">
+         ⏻
+        </button>
+      </div>
+    `;
+    window.location.reload();
+    closeSignup();
+    } else {
+      alert("Google Signup failed");
+    }
+  })
+  .catch(err => console.error(err));
+}
+function openLogin() {
+  document.getElementById("loginModal").style.display = "block";
+}
+function closeLogin() {
+  document.getElementById("loginModal").style.display = "none";
+}
+function openSignup() {
+  document.getElementById("signupModal").style.display = "block";
+}
+function closeSignup() {
+  document.getElementById("signupModal").style.display = "none";
+}
+async function check_authentication(){
+  const res = await fetch("/check_auth", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include"
+  });
+
+  const data = await res.json();
+
+  if (data.username) {
+
+      document.getElementsByClassName('auth')[0].style.display = "none";
+        document.getElementById('user_prof').style.display= 'block';
+        document.getElementById('user_prof').innerHTML = `
+        <div style="
+          display:flex;
+          align-items:center;
+          gap:10px;
+          background:#eef2ff;
+          padding:6px 10px;
+          border-radius:999px;
+          border:1px solid #c7d2fe;
+        ">
+          <span style="font-weight:600; color:#4338ca;">
+            👤 ${data.username}
+          </span>
+
+          <button onclick="logout()" style="
+            border:none;
+            background:transparent;
+            cursor:pointer;
+            font-size:14px;
+          ">
+           ⏻
+          </button>
+        </div>
+      `;
+
+  }
+}
+
+
+// ===== LOGIN =====
+async function login() {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  const res = await fetch("/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+    credentials: "include"
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    document.getElementsByClassName('auth')[0].style.display = "none";
+    document.getElementById('user_prof').style.display= 'block';
+    document.getElementById('user_prof').innerHTML = `
+    <div style="
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:#eef2ff;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid #c7d2fe;
+    ">
+      <span style="font-weight:600; color:#4338ca;">
+        👤 ${data.user}
+      </span>
+
+      <button onclick="logout()" style="
+        border:none;
+        background:transparent;
+        cursor:pointer;
+        font-size:14px;
+      ">
+       ⏻
+      </button>
+    </div>
+  `;
+    closeLogin();
+    window.location.reload();
+  } else {
+    alert("Login failed");
+  }
+}
+// ===== LOGOUT =====
+async function logout() {
+    document.getElementsByClassName('auth')[0].style.display = "block";
+    document.getElementById('user_prof').style.display= 'none';
+    fetch("/logout", {
+    method: "GET",
+    credentials: "include"
+    });
+    window.location.reload();
+}
+
+// ===== SIGNUP =====
+async function signup() {
+  const email = document.getElementById("signupEmail").value;
+  const password = document.getElementById("signupPassword").value;
+
+  const res = await fetch("/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    document.getElementsByClassName('auth')[0].style.display = "none";
+    document.getElementById('user_prof').style.display= 'block';
+    document.getElementById('user_prof').innerHTML = `
+    <div style="
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:#eef2ff;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid #c7d2fe;
+    ">
+      <span style="font-weight:600; color:#4338ca;">
+        👤 ${data.user}
+      </span>
+
+      <button onclick="logout()" style="
+        border:none;
+        background:transparent;
+        cursor:pointer;
+        font-size:14px;
+      ">
+        ⏻
+      </button>
+    </div>
+  `;
+    closeSignup();
+    window.location.reload();
+  } else {
+    alert("Signup failed");
   }
 }
 
