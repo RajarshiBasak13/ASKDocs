@@ -56,6 +56,10 @@ User → UI → Flask Backend → Agent Graph → LLM & Tools → Reply (with So
 
 ## What Happens Behind the Scenes
 
+**Agentic Workflow:-**
+
+![img.png](img.png)
+
 **1. Session & Auth**
 - Flask sessions and cookie-based JWTs.
 - Endpoint `/check_auth` to confirm you’re logged in.
