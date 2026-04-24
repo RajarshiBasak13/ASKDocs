@@ -264,39 +264,101 @@ body {
 
 @media (max-width: 768px) {
 
+  /* ===== SIDEBAR ===== */
   .sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    height: 100%;
-    transform: translateX(-100%);
+    width: 80%;
+    max-width: 300px;
+    z-index: 100;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.15);
   }
 
-  .sidebar.open {
-    transform: translateX(0);
+  #overlay {
+    display: none;
+  }
+
+  .sidebar.open + #overlay {
+    display: block;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
   }
 
   .menu-btn {
     display: block;
+    font-size: 18px;
   }
 
+  /* ===== CHAT AREA ===== */
   .chat-container {
-    padding: 10px;
+    padding: 10px 8px;
   }
 
   .chat-box {
-    margin-bottom: 10px;
+    padding: 12px;
+    border-radius: 14px;
   }
 
+  /* ===== MESSAGES ===== */
+  .msg {
+    max-width: 85%;   /* reduce width for readability */
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  /* ===== INPUT AREA ===== */
   .input-area {
-    position: sticky;
-    bottom: 12px;
-    background: rgba(255,255,255,0.95);
-    padding: 8px;
+    position: fixed;
+    bottom: 10px;
+    left: 8px;
+    right: 8px;
+    z-index: 50;
+
+    padding: 6px;
     border-radius: 14px;
-    box-shadow: 0 -6px 20px rgba(0,0,0,0.08);
+    gap: 6px;
+  }
+
+  .input-area input {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  /* Mode selector smaller */
+  #modeSelector {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  /* Bigger send button for thumb */
+  .input-area button {
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  /* ===== SCROLL SPACE FIX ===== */
+  .chat-box {
+    margin-bottom: 70px; /* prevents input overlap */
+  }
+
+  /* ===== CHAT ITEMS ===== */
+  .chat-item {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  /* ===== UPLOAD BOX ===== */
+  .upload-box {
+    height: 32px;
+    font-size: 13px;
   }
 }
+
 #modeSelector {
   margin-left: 8px;
   padding: 6px;
