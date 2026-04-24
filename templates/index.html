@@ -263,21 +263,40 @@ body {
 
 
 @media (max-width: 768px) {
+  .username {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  }
 
   /* ===== SIDEBAR ===== */
   .sidebar {
-    width: 80%;
-    max-width: 300px;
-    z-index: 100;
-    box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 260px;
+
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+
+    z-index: 100; /* IMPORTANT */
   }
 
   #overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
     display: none;
+    z-index: 90;
   }
 
-  .sidebar.open + #overlay {
+  #overlay.show {
     display: block;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
   }
 
   /* ===== HEADER ===== */
