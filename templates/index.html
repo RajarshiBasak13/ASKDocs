@@ -263,20 +263,52 @@ body {
 .user-section {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 6px;
+  gap: 8px;
+
+  background: #eef2ff;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #c7d2fe;
+
+  max-width: 220px; /* desktop */
 }
 
 .username {
   flex: 1;
-  min-width: 0; /* VERY IMPORTANT */
-}
+  min-width: 0;
 
-@media (max-width: 768px) {
-  .username {
+  font-weight: 600;
+  color: #4338ca;
+
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.profile-icon {
+  flex-shrink: 0;
+}
+
+.logout-btn {
+  flex-shrink: 0;
+}
+@media (max-width: 768px) {
+  .user-section {
+    max-width: 140px;   /* smaller on mobile */
+    padding: 5px 8px;
+    gap: 6px;
+  }
+
+  .username {
+    font-size: 13px;
+  }
+
+  .profile-icon {
+    font-size: 13px;
+  }
+
+  .logout-btn {
+    font-size: 13px;
   }
 
   /* ===== SIDEBAR ===== */
@@ -1024,27 +1056,10 @@ function handleGoogleSignup(response) {
       document.getElementsByClassName('auth')[0].style.display = "none";
       document.getElementById('user_prof').style.display= 'block';
       document.getElementById('user_prof').innerHTML = `
-      <div style="
-        display:flex;
-        align-items:center;
-        gap:10px;
-        background:#eef2ff;
-        padding:6px 10px;
-        border-radius:999px;
-        border:1px solid #c7d2fe;
-      ">
-        <span style="font-weight:600; color:#4338ca;">
-          👤 ${data.user}
-        </span>
-
-        <button onclick="logout()" style="
-          border:none;
-          background:transparent;
-          cursor:pointer;
-          font-size:14px;
-        ">
-         ⏻
-        </button>
+      <div class="user-section">
+        <span class="profile-icon">${data.user[0].toUpperCase()}</span>
+        <span class="username">${data.user}</span>
+        <button class="logout-btn" onclick="logout()">⏻</button>
       </div>
     `;
     window.location.reload();

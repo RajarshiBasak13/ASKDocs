@@ -22,6 +22,9 @@ This is not a simple trained model API calling chatbot. It is a **decision-makin
 
 # 🧠 Core Architecture
 
+## Workflow:- ##
+![img_1.png](img_1.png)
+
 ## High-Level Flow
 
 ```
