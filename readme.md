@@ -1,208 +1,500 @@
 # SeekInfo – Intelligent Agentic Search & Knowledge System
 
-## Overview
+## 🚀 Overview
 
-SeekInfo isn’t your average chatbot. It’s an AI-powered knowledge engine that juggles user data (PDFs, text files, even pasted snippets), real-time web search, and strong reasoning with memory built in. The system figures out the best way to answer your question—sometimes it taps into its own knowledge, sometimes it pulls info from your docs, fires up a web search, or even builds out a deep-dive, multi-step report. This isn’t about chatting. It’s about smart, dynamic decision-making from end to end.
+**SeekInfo** is an advanced AI-powered knowledge system that combines:
 
----
+* 📂 **User-provided data (PDF, TXT, custom text)**
+* 🌐 **Web search (on-demand)**
+* 🧠 **LLM reasoning with memory (STM + LTM)**
+* 🔁 **Agentic workflow (LangGraph-based orchestration)**
 
-# Core Architecture
+The system dynamically decides **how to answer a query**:
 
-High-level, here’s how things move:
+* Direct answer (LLM knowledge)
+* Retrieval from vector database (RAG)
+* Web search augmentation
+* Multi-step detailed report generation
 
-User → UI → Flask Backend → Agent Graph → LLM & Tools → Reply (with Sources)
-
----
-
-# Frontend (index.html)
-
-## What the Frontend Does
-
-**1. Chat Interface**
-- Shows messages from you and the bot.
-- Manages multiple conversations.
-- Stylish, animated, scrollable chat.
-
-**2. Interaction Modes**
-- Choose how you want answers:
-  - Normal Answer
-  - Quick Summary
-  - Detailed Report
-- These choices control how the backend processes your question.
-
-**3. File Upload**
-- Drop in PDFs or TXT files.
-- Upload flow is slick: files go to `/upload`, backend does background processing, frontend checks on progress, and you see clear “processing” or “ready” statuses.
-
-**4. Custom Text**
-- Paste in any text—treats it like another document for searching.
-
-**5. Chat Threads**
-- Start a new chat (`/new_chat`), load existing ones, or pull up the message history. It’s all there.
-
-**6. Citations**
-- Every bot answer includes clickable source “chips.”
-- Click for a detailed popup showing the source file, page, and the exact quote the answer came from.
-- You always know exactly where info came from.
-
-**7. Authentication**
-- Supports both basic email/password and Google sign-in.
-- JWT tokens stored securely in cookies.
-- Backend tracks your session.
+This is not a simple trained model API calling chatbot. It is a **decision-making AI pipeline** using Langgraph.
 
 ---
 
-# Backend (app.py)
+# 🧠 Core Architecture
 
-## What Happens Behind the Scenes
+## High-Level Flow
 
-**Agentic Workflow:-**
-
-![img.png](img.png)
-
-**1. Session & Auth**
-- Flask sessions and cookie-based JWTs.
-- Endpoint `/check_auth` to confirm you’re logged in.
-
-**2. Chat System**
-| Endpoint    | What It Does           |
-|-------------|-----------------------|
-| `/new_chat` | Start new conversation|
-| `/get_thread` | See all chats       |
-| `/get_chat`  | Load messages        |
-
-**3. Upload Pipeline**
-- Handles uploads step by step:
-  1. Checks & saves file, uniquely per user.
-  2. Processes it in the background (async, so app stays fast).
-  3. Adds chunks to vector DB for search.
-  4. Keeps upload progress updated for the frontend.
-
-**4. Query Processing**
-- Main endpoint is `/generate`:
-  - Give it your question, the answer mode, and which thread you’re in.
-  - It returns the answer and the matching citations.
-
-**5. Logout Cleanup**
-- On logout, it wipes your session, file uploads, and any vector data tied to you. Nothing lingers.
+```
+User → UI → Flask Backend → Agentic Graph → LLM + Tools → Response + Citations(Incase any source used to reply)
+```
 
 ---
 
-# Agentic System (Agentic.py)
+# 🖥️ Frontend (index.html)
 
-This is the real brain, built on LangGraph’s StateGraph.
+## Key Responsibilities
 
-## Node Highlights
+### 1. Chat Interface
 
-- **Memory Handling:** Preps short-term and long-term memory, compresses chat history for context-aware replies.
-- **Search & Retrieval:** Pulls relevant info from your uploaded docs.
-- **Web Decisions:** Smartly figures out if web data is needed. If so, crafts a better query and gets it.
-- **Final Answer:** Merges all sources, gives a clear response.
+* Displays user and bot messages
+* Supports multiple chat threads
+* Scrollable chat container with animation
 
-### Detailed Report Pipeline
-When you select “Detailed Report,” the system runs an elaborate, multi-stage process:
-- Generates sub-questions and queries
-- Gathers details from docs and the web as needed
-- Organizes into sections
-- Wraps up everything into a structured, multi-section report
+### 2. Modes of Interaction
 
----
+User can select:
 
-# Decision Logic (Why It's Smart)
+* `Normal Answer`
+* `Quick Summary`
+* `Detailed Report`
 
-Step 1: Checks which answer mode you picked. If you asked for a report, it launches the full pipeline. Otherwise, it goes to a classic QA path.
-
-Step 2: Decides if fresh web data is needed. If so, fetches and blends it in. If not, sticks with internal sources.
-
-Step 3: Answers your question, always including citations.
+These directly influence backend agent routing.
 
 ---
 
-# Memory Design
+### 3. File Upload System
 
-- **Short-Term Memory (STM):** Remembers recent chat so answers keep the conversation’s flow.
-- **Long-Term Memory (LTM):** Stores background knowledge and preferences for each user.
+Supports:
 
----
+* `.pdf`
+* `.txt`
 
-# Vector Database
+Flow:
 
-- Chunks and embeds every document for fast semantic search.
-- When you search, it grabs the most relevant chunks and plugs them into the answer.
+1. User uploads file
+2. File sent to `/upload`
+3. Backend processes asynchronously
+4. UI polls `/upload_status`
+5. Shows:
 
----
-
-# Database Layer
-
-- User DB: email, password, token.
-- Chat DB: threads, users, names.
-- LTM DB: user-specific long-term memory.
+   * ⏳ processing
+   * ✅ ready
 
 ---
 
-# Citation System
+### 4. Custom Text Injection
 
-- Each answer links directly to its sources: file name, page, and the precise snippet quoted.
-- Frontend turns these into clickable chips so you can always trace what the bot says.
-
----
-
-# Example Workflows
-
-**1. Simple Question:**  
-You ask, “What is AI?”  
-- System checks recent chat, long-term user info, and stored docs.  
-- Generates answer — no web needed.
-
-**2. File-Based Question:**  
-“Summarize my uploaded file.”  
-- Searches and extracts info directly from your document.
-
-**3. Real-Time Need:**  
-“Latest news on AI.”  
-- Bot detects the need for up-to-date info, searches the web, adds sources, builds the answer.
-
-**4. Detailed Report:**  
-You ask for a deep dive — the system orchestrates a multi-step report with sections and sources.
+* User can paste raw text
+* Sent to `/add_text`
+* Treated like a document in vector DB
 
 ---
 
-# Security
+### 5. Chat Thread System
 
-- Sessions use JWTs in secure cookies.
-- Each user’s data and files stay totally isolated.
-- When you log out, all your data and session info vanish — no leftovers.
-
----
-
-# Limitations
-
-- There’s no rate limiting yet.
-- Files over 1MB aren’t supported.
-- Only runs on a single server for now.
-- No distributed task queue — threads handle async work, which isn’t as scalable.
+* `/new_chat` → creates thread
+* `/get_thread` → loads history
+* `/get_chat` → loads messages
 
 ---
 
-# Looking Ahead
+### 6. Citation System (Important Feature)
 
-- Plans for a Redis queue to handle scale.
-- Streaming answers for a smoother feel.
-- Better UI state and multi-user support.
-- Smarter, sharper filtering in the vector DB.
+Each bot response:
+
+* Displays **source chips**
+* On click → opens popup with:
+
+  * Source name
+  * Page number (if exists)
+  * Exact chunk used
+
+This gives **true explainability**
 
 ---
 
-# Final Thoughts
+### 7. Authentication
 
-SeekInfo stands out because it doesn’t just pull from one source. It doesn’t blindly search the web or always fall back on retrieval — it uses smart logic to decide the best move every time you ask something. That’s real agentic intelligence in action.
+Supports:
+
+* Email/password login
+* Google OAuth(currently huggingface not allow this)
+
+Uses:
+
+* JWT stored in cookie (`auth_token`)
+* Session tracking on backend
 
 ---
 
-# Quick Recap
+# ⚙️ Backend (app.py)
 
-- Hybrid AI with web, memory, and your docs.
-- Chatbot that’s actually explainable (great citations).
-- Modular agent pipeline, totally context-aware.
+## Core Components
 
-And if you’re ready for next steps, let’s do something concrete — mapping out an architecture diagram, tuning the agent graph, or improving RAG logic for tougher scenarios (interviews, anyone?). Just say the word.
+### 1. Session & Auth
+
+* Uses Flask session + JWT cookies
+* `/check_auth` validates user
+
+---
+
+### 2. Chat System
+
+| Endpoint      | Purpose                    |
+| ------------- |----------------------------|
+| `/new_chat`   | Create new chat            |
+| `/get_thread` | Get all previous chats     |
+| `/get_chat`   | Load previous chat history |
+
+---
+
+### 3. Upload Pipeline
+
+```
+Upload → Save → Async Processing → Vector DB
+```
+
+Steps:
+
+1. Validate file
+2. Save with user prefix
+3. Start thread:
+
+   ```
+   load_data(user_id, filename)
+   ```
+4. Track status in `upload_st`
+
+---
+
+### 4. Query Processing
+
+Main endpoint:
+
+```
+POST /generate
+```
+
+Input:
+
+```json
+{
+  "prompt": "...",
+  "mode": "normal | summary | report",
+  "thread": "thread_id"
+}
+```
+
+Output:
+
+```json
+{
+  "answer": "...",
+  "citation": [...]
+}
+```
+
+---
+
+### 5. Logout Cleanup
+
+On logout:
+
+* Deletes user vector data
+* Deletes uploaded files
+* Clears session
+
+This avoids:
+
+* data leakage
+* storage bloat
+
+---
+
+# 🤖 Agentic System (agentic_ai.py)
+
+This is the **brain of the system**.
+
+Built using **LangGraph StateGraph**.
+
+---
+
+## 🧩 Nodes Overview
+
+### Memory Pipeline
+
+1. `STM_preparation` → Short-term memory prep
+2. `chat_summery` → compress previous chat history
+3. `LTM_preparation` → long-term memory integration
+
+---
+
+### Retrieval Pipeline
+
+4. `retrieved_relevant_info` → vector DB search
+
+---
+
+### Web Decision System
+
+5. `decide_webdata_needed` -> It decides if web search is needed based on prompt
+6. `enhanced_query`  -> It enrich query with more keywords so we get good web search result
+7. `search_web` -> It searches web
+
+---
+
+### Final Answer
+
+8. `final_ans_with_aggregate_context` 
+-> This node aggregate all context information received via web, Rag retrieval, short-term and long-term memory and finally generate answer
+
+---
+
+## 📊 Detailed Mode Pipeline
+
+Triggered when:
+
+```
+mode = "report"
+```
+
+Flow:
+
+```
+detailed_query_generator
+    ↓
+detailed_relevant_info + detailed_web_info
+    ↓
+detailed_merge_context
+    ↓
+detailed_subHeader_length_generation
+    ↓
+detailed_section_generation
+    ↓
+detailed_merge_finalize
+```
+
+Output:
+
+* Structured report
+* Multi-section answer
+
+---
+
+# 🔀 Decision Logic (Very Important)
+
+### Step 1: Mode Check
+
+```
+check_detailed:
+    if report → detailed pipeline
+    else → QA pipeline (QA means normal question answer flow)
+```
+
+---
+
+### Step 2: Web Decision
+
+```
+decide_webdata_needed → is_webdata_needed
+```
+
+If:
+
+* Query needs fresh info → YES
+* Otherwise → NO
+
+---
+
+### Step 3: Final Routing
+
+#### Case 1: No Web Needed
+
+```
+retrieved_relevant_info → final answer
+```
+
+#### Case 2: Web Needed
+
+```
+enhanced_query → search_web → merge → final answer
+```
+
+---
+
+# 🧠 Memory Design
+
+## Short-Term Memory (STM)
+
+* Recent conversation
+* Helps contextual replies
+
+## Long-Term Memory (LTM)
+
+* Stored in DB
+* Used for personalization
+
+---
+
+# 📦 Vector Database
+
+Used for:
+
+* Document embeddings
+* Semantic search
+
+Flow:
+
+```
+Document → Chunk → Embed → Store
+Query → Embed → Similarity search → Context
+```
+
+---
+
+# 🗂️ Database Layer
+
+## Tables
+
+### User DB
+
+* email
+* password
+* token
+
+### Chat DB
+
+* thread_id
+* user
+* chat_name
+
+### LTM DB
+
+* long-term memory storage
+
+---
+
+# 🔍 Citation Mechanism
+
+Each answer returns:
+
+```
+[
+  {
+    source: "file.pdf",
+    page: 3,
+    chunk: "text..."
+  }
+]
+```
+
+Frontend converts into:
+
+* clickable chips
+* popup view
+
+---
+
+# 🧪 Example Workflows
+
+---
+
+## 🧾 Case 1: Simple Question
+
+```
+User: "What is AI?"
+
+Flow:
+STM → LTM → Retrieval → Final Answer
+```
+
+No web used.
+
+---
+
+## 📂 Case 2: File-Based Question
+
+```
+User: "Summarize my uploaded file"
+```
+
+Flow:
+
+```
+Vector DB → Retrieve chunks → Answer
+```
+
+---
+
+## 🌐 Case 3: Real-time Question
+
+```
+User: "Latest news on AI"
+```
+
+Flow:
+
+```
+decide_webdata_needed → YES
+→ search_web → merge → answer
+```
+
+---
+
+## 📊 Case 4: Detailed Report
+
+```
+User selects "Detailed Report"
+```
+
+Flow:
+
+```
+Multi-stage pipeline → structured output
+```
+
+---
+
+# 🔒 Security Notes
+
+* JWT stored in HTTP-only cookie
+* Session-based user tracking
+* File isolation per user
+* Data deleted on logout
+
+---
+
+# ⚠️ Limitations
+
+* No rate limiting
+* No file size scaling beyond 1MB
+* Single-node deployment(for now)
+* No async queue system (uses threads)
+
+---
+
+# 🚀 Future Improvements
+
+* Will implement self-RAG to verify if the retrieved context is good to use based on prompt.
+  Research Paper -> https://arxiv.org/abs/2310.11511
+* Add Redis queue for scaling
+* Add streaming responses
+* Add better UI state management
+* Add multi-user concurrency control
+* Improve vector DB filtering
+
+---
+
+# 🧠 Final Insight
+
+This system is powerful because it:
+
+* Does **not blindly use RAG**
+* Does **not always use web**
+* Makes **intelligent decisions dynamically**
+
+That is what makes it **agentic**.
+
+---
+
+# ✅ Summary
+
+SeekInfo is:
+
+✔ Hybrid AI system
+✔ Context-aware chatbot
+✔ Retrieval + Web + Memory system
+✔ Explainable (citations)
+✔ Modular agent pipeline
+
+---
